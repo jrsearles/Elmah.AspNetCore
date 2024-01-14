@@ -14,11 +14,13 @@ namespace Elmah.AspNetCore.MySql;
 /// </summary>
 public class MySqlErrorLog : ErrorLog
 {
+    private volatile bool _checkTableExists = false;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="MySqlErrorLog" /> class
     ///     using a dictionary of configured settings.
     /// </summary>
-    public MySqlErrorLog(IOptions<MySqlErrorLogOptions> option) : this(option.Value.ConnectionString)
+    public MySqlErrorLog(IOptions<MySqlErrorLogOptions> option) : this(option.Value.ConnectionString, option.Value.CreateTablesIfNotExist)
     {
     }
 
@@ -26,15 +28,15 @@ public class MySqlErrorLog : ErrorLog
     ///     Initializes a new instance of the <see cref="MySqlErrorLog" /> class
     ///     to use a specific connection string for connecting to the database.
     /// </summary>
-    public MySqlErrorLog(string connectionString)
+    public MySqlErrorLog(string connectionString, bool checkTableExists)
     {
         if (string.IsNullOrEmpty(connectionString))
         {
-            throw new ArgumentNullException("connectionString");
+            throw new ArgumentNullException(nameof(connectionString));
         }
 
         ConnectionString = connectionString;
-        CreateTableIfNotExist();
+        _checkTableExists = checkTableExists;
     }
 
     /// <summary>
@@ -51,29 +53,29 @@ public class MySqlErrorLog : ErrorLog
     {
         ArgumentNullException.ThrowIfNull(error);
 
+        await this.EnsureTableExistsAsync(cancellationToken);
+
         var errorXml = ErrorXml.EncodeString(error);
 
-        using (var connection = new MySqlConnection(ConnectionString))
-        using (var command = CommandExtension.LogError(error.Id, ApplicationName, error.HostName, error.Type,
-            error.Source, error.Message, error.User, error.StatusCode, error.Time, errorXml))
-        {
-            await connection.OpenAsync(cancellationToken);
-            command.Connection = connection;
-            await command.ExecuteNonQueryAsync(cancellationToken);
-        }
+        using var connection = new MySqlConnection(ConnectionString);
+        using var command = CommandExtension.LogError(error.Id, ApplicationName, error.HostName, error.Type, error.Source, error.Message, error.User, error.StatusCode, error.Time, errorXml);
+        await connection.OpenAsync(cancellationToken);
+        command.Connection = connection;
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public override async Task<ErrorLogEntry?> GetErrorAsync(Guid id, CancellationToken cancellationToken)
     {
+        await this.EnsureTableExistsAsync(cancellationToken);
+
         string? errorXml;
 
-        using (var connection = new MySqlConnection(ConnectionString))
-        using (var command = CommandExtension.GetErrorXml(ApplicationName, id))
-        {
-            command.Connection = connection;
-            await connection.OpenAsync(cancellationToken);
-            errorXml = (string?) await command.ExecuteScalarAsync(cancellationToken);
-        }
+        using var connection = new MySqlConnection(ConnectionString);
+        using var command = CommandExtension.GetErrorXml(ApplicationName, id);
+
+        command.Connection = connection;
+        await connection.OpenAsync(cancellationToken);
+        errorXml = (string?)await command.ExecuteScalarAsync(cancellationToken);
 
         if (errorXml == null)
         {
@@ -89,71 +91,68 @@ public class MySqlErrorLog : ErrorLog
     {
         if (errorIndex < 0)
         {
-            throw new ArgumentOutOfRangeException("errorIndex", errorIndex, null);
+            throw new ArgumentOutOfRangeException(nameof(errorIndex), errorIndex, null);
         }
 
         if (pageSize < 0)
         {
-            throw new ArgumentOutOfRangeException("pageSize", pageSize, null);
+            throw new ArgumentOutOfRangeException(nameof(pageSize), pageSize, null);
         }
 
-        using (var connection = new MySqlConnection(ConnectionString))
+        await this.EnsureTableExistsAsync(cancellationToken);
+
+        using var connection = new MySqlConnection(ConnectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        using (var command = CommandExtension.GetErrorsXml(ApplicationName, errorIndex, pageSize))
         {
-            await connection.OpenAsync(cancellationToken);
+            command.Connection = connection;
 
-            using (var command = CommandExtension.GetErrorsXml(ApplicationName, errorIndex, pageSize))
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
             {
-                command.Connection = connection;
-
-                using (var reader = await command.ExecuteReaderAsync(cancellationToken))
-                {
-                    while (await reader.ReadAsync(cancellationToken))
-                    {
-                        var id = reader.GetGuid(0);
-                        var xml = reader.GetString(1);
-                        var error = ErrorXml.DecodeString(id, xml);
-                        errorEntryList.Add(new ErrorLogEntry(this, error));
-                    }
-                }
+                var id = reader.GetGuid(0);
+                var xml = reader.GetString(1);
+                var error = ErrorXml.DecodeString(id, xml);
+                errorEntryList.Add(new ErrorLogEntry(this, error));
             }
-
-            return await GetTotalErrorsXml(connection, cancellationToken);
         }
+
+        return await GetTotalErrorsXml(connection, cancellationToken);
     }
 
     /// <summary>
     ///     Creates the necessary tables used by this implementation
     /// </summary>
-    private void CreateTableIfNotExist()
+    private async Task EnsureTableExistsAsync(CancellationToken cancellationToken)
     {
-        using (var connection = new MySqlConnection(ConnectionString))
+        if (!_checkTableExists)
         {
-            connection.Open();
-            var databaseName = connection.Database;
+            return;
+        }
 
-            using (var commandCheck = CommandExtension.CheckTable(databaseName))
-            {
-                commandCheck.Connection = connection;
-                var exists = Convert.ToBoolean(commandCheck.ExecuteScalar());
+        _checkTableExists = false;
 
-                if (!exists)
-                {
-                    using (var commandCreate = CommandExtension.CreateTable())
-                    {
-                        commandCreate.Connection = connection;
-                        commandCreate.ExecuteNonQuery();
-                    }
-                }
-            }
+        using var connection = new MySqlConnection(ConnectionString);
+        await connection.OpenAsync(cancellationToken);
+        var databaseName = connection.Database;
+
+        using var commandCheck = CommandExtension.CheckTable(databaseName);
+        commandCheck.Connection = connection;
+        var exists = Convert.ToBoolean(await commandCheck.ExecuteScalarAsync(cancellationToken));
+
+        if (!exists)
+        {
+            using var commandCreate = CommandExtension.CreateTable();
+            commandCreate.Connection = connection;
+            await commandCreate.ExecuteNonQueryAsync(cancellationToken);
         }
     }
 
     private async Task<int> GetTotalErrorsXml(MySqlConnection connection, CancellationToken cancellationToken)
     {
-        using (var command = CommandExtension.GetTotalErrorsXml(ApplicationName))
-        {
-            command.Connection = connection;
-            return (int)(await command.ExecuteScalarAsync(cancellationToken))!;
-        }
+        using var command = CommandExtension.GetTotalErrorsXml(ApplicationName);
+        command.Connection = connection;
+        return Convert.ToInt32(await command.ExecuteScalarAsync(cancellationToken));
     }
 }
