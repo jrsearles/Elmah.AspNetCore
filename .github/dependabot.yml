@@ -11,8 +11,6 @@ updates:
     System:
       patterns:
         - "System*"
-      exclude-patterns:
-        - "System.IdentityModel*"
     Extensions:
       patterns:
         - "Microsoft.Extensions*"
@@ -24,3 +22,4 @@ updates:
         - "Microsoft.NET.Tests*"
         - "xunit*"
         - "coverlet*"
+        - "NSubstitute*"
