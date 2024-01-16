@@ -1,13 +1,13 @@
 using System;
 using Elmah.AspNetCore.Logger;
-using Elmah.Memory;
-using Elmah.Xml;
+using Elmah.AspNetCore.Memory;
+using Elmah.AspNetCore.Xml;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public static class ElmahBuilderExtensions
 {

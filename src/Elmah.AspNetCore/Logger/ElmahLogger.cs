@@ -43,7 +43,7 @@ internal sealed class ElmahLogger : ILogger
         var feature = _accessor.HttpContext!.Features.Get<IElmahLogFeature>()!;
         var entry = new ElmahLoggerMessage<TState>
         {
-            TimeStamp = DateTime.Now,
+            TimeStamp = DateTime.UtcNow,
             State = state,
             Exception = exception,
             Formatter = formatter,

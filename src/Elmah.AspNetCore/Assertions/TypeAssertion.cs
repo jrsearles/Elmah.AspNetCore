@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Elmah;
+using Elmah.AspNetCore;
 
 // ReSharper disable MemberCanBePrivate.Global
 

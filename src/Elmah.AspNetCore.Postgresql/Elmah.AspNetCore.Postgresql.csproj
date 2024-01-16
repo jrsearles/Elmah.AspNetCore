@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Elmah.Common\Elmah.Common.csproj" />
+    <ProjectReference Include="..\Elmah.AspNetCore.Common\Elmah.AspNetCore.Common.csproj" />
   </ItemGroup>
 
 </Project>

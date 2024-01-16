@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public class ElmahBuilder : IElmahBuilder
 {

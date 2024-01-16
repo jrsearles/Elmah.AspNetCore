@@ -1,4 +1,4 @@
-using Elmah;
+using Elmah.AspNetCore;
 using Elmah.AspNetCore.DemoCore6;
 
 var builder = WebApplication.CreateBuilder(args);

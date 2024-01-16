@@ -2,17 +2,25 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace Elmah.AspNetCore;
 
 internal class ElmahLogFeature : IElmahLogFeature
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        MaxDepth = 0
+    };
+
     private readonly ConcurrentDictionary<Guid, ElmahLogSqlEntry> _map = new();
     private readonly ConcurrentBag<IElmahLogMessage> _logs = new();
-    private readonly ConcurrentBag<ElmahLogParameters> _params = new();
+    private readonly ConcurrentBag<ElmahLogParamEntry> _params = new();
 
     public IReadOnlyCollection<IElmahLogMessage> Log => _logs.ToList();
-    public IReadOnlyCollection<ElmahLogParameters> Params => _params.ToList();
+    public IReadOnlyCollection<ElmahLogParamEntry> Params => _params.ToList();
     public IReadOnlyCollection<ElmahLogSqlEntry> LogSql => _map.Values.OrderBy(i => i.TimeStamp).ToList();
 
     public void AddMessage(IElmahLogMessage entry)
@@ -36,6 +44,24 @@ internal class ElmahLogFeature : IElmahLogFeature
     public void LogParameters((string name, object? value)[] list, string typeName, string memberName,
         string file, int line)
     {
-        _params.Add(new ElmahLogParameters(DateTime.Now, list, typeName, memberName, file, line));
+        var paramList = list.Where(x => x != default).Select(x => new KeyValuePair<string, string>(x.name, ValueToString(x.value))).ToArray();
+        _params.Add(new ElmahLogParamEntry(DateTime.UtcNow, paramList, typeName, memberName, file, line));
+    }
+
+    private static string ValueToString(object? paramValue)
+    {
+        if (paramValue is null)
+        {
+            return "null";
+        }
+
+        try
+        {
+            return JsonSerializer.Serialize(paramValue, SerializerOptions);
+        }
+        catch
+        {
+            return paramValue.ToString()!;
+        }
     }
 }

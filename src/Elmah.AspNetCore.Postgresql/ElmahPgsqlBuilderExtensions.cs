@@ -3,7 +3,7 @@ using Elmah.AspNetCore.Postgresql;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public static class ElmahPgsqlBuilderExtensions
 {

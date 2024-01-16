@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public static class ElmahSqlBuilderExtensions
 {

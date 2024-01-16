@@ -89,7 +89,7 @@ internal sealed class ErrorFactory : IErrorFactory
         
         var error = new Error
         {
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Exception = baseException,
             Message = baseException?.Message,
             Source = baseException?.Source,
@@ -103,13 +103,6 @@ internal sealed class ErrorFactory : IErrorFactory
             SqlLog = feature?.LogSql.ToArray(),
             Params = feature?.Params
                 .Where(x => x.Params.Any())
-                .Select(x => new ElmahLogParamEntry(
-                    x.TimeStamp,
-                    GetStringParams(x.Params),
-                    x.TypeName,
-                    x.MemberName,
-                    x.File,
-                    x.Line))
                 .ToArray(),
             Type = typeName
         };
@@ -165,28 +158,6 @@ internal sealed class ErrorFactory : IErrorFactory
         }
 
         return 500;
-    }
-
-    private static KeyValuePair<string, string>[] GetStringParams((string name, object? value)[] paramParams) =>
-        (from param in paramParams
-         where param != default
-         select new KeyValuePair<string, string>(param.name, ToJsonString(param.value))).ToArray();
-
-    private static string ToJsonString(object? paramValue)
-    {
-        if (paramValue is null)
-        {
-            return "null";
-        }
-
-        try
-        {
-            return JsonSerializer.Serialize(paramValue, SerializerOptions);
-        }
-        catch
-        {
-            return paramValue.ToString()!;
-        }
     }
 
     private static NameValueCollection GetServerVariables(HttpContext? context)
