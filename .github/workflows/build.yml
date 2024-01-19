@@ -3,8 +3,9 @@ name: Build
 on:
   workflow_dispatch:
   push:
-    tags-ignore:
+    branches:
       - '**'
+      
 jobs:
   build:
 
