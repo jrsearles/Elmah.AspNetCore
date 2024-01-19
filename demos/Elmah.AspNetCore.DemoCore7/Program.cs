@@ -1,4 +1,4 @@
-using Elmah;
+using Elmah.AspNetCore;
 
 internal class Program
 {

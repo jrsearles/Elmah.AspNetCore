@@ -9,8 +9,8 @@ ELMAH (Error Logging Middleware and Handlers) for ASP.NET Core.
 Features include:
 
 - Logging of unhandled exceptions
-- Friendly UI to view captured errors and contextual information
-- Hooks to include handled exceptions and other contextual information
+- Friendly UI to view captured errors along with contextual information
+- Hooks to include handled exceptions and additional contextual information
 - Various methods to [persist error logs](#error-persistence)
 - Supports [securing UI](#restrict-access-to-the-elmah-ui) via built-in ASP.Net Core functionality
 - [Notifications of errors](#using-notifiers) through email or custom notifiers
@@ -32,7 +32,7 @@ dotnet add package Elmah.AspNetCore
 **Next**, in your application's _Program.cs_ file, configure Elmah:
 
 ```csharp
-using Elmah;
+using Elmah.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -155,7 +155,7 @@ You can create your own notifiers by implementing `IErrorNotifier` interface and
 (A notifier which generates emails is build into the library.)
 
 ```csharp
-using Elmah;
+using Elmah.AspNetCore;
 using Elmah.AspNetCore.Notifiers;
 
 builder.Host.UseElmah((builderContext, elmah) =>
@@ -172,7 +172,7 @@ builder.Host.UseElmah((builderContext, elmah) =>
 You can use Elmah XML filter configuration in separate file or define them in code. Implement `IErrorFilter` to define custom filters in code. Filtered errors will be logged, but will not be sent.
 
 ```csharp
-using Elmah;
+using Elmah.AspNetCore;
 
 builder.Host.UseElmah((builderContext, elmah) =>
 {

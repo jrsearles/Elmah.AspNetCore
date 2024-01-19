@@ -5,7 +5,7 @@ using Elmah.AspNetCore;
 using FluentAssertions;
 using Xunit;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public class ParseStackTrace
 {

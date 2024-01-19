@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.MsSql", "s
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{8E26F641-674E-421C-B37C-AF2A690DA1CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.Common", "src\Elmah.Common\Elmah.Common.csproj", "{0F75E1E4-32CB-47A5-8548-2798FFBAC4B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.Common", "src\Elmah.AspNetCore.Common\Elmah.AspNetCore.Common.csproj", "{0F75E1E4-32CB-47A5-8548-2798FFBAC4B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore", "src\Elmah.AspNetCore\Elmah.AspNetCore.csproj", "{BF039A92-379C-41E5-A8D2-6C26DAEFDC60}"
 EndProject

@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Elmah.Memory;
+using Elmah.AspNetCore.Memory;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

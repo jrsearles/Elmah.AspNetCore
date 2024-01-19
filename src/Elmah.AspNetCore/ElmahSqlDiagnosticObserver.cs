@@ -100,7 +100,7 @@ internal sealed class ElmahSqlDiagnosticObserver : IObserver<DiagnosticListener>
         {
             CommandType = cmd.CommandType.ToString(),
             SqlText = query,
-            TimeStamp = DateTime.Now,
+            TimeStamp = DateTime.UtcNow,
             TimerStart = Stopwatch.GetTimestamp(),
             DurationMs = 0
         });

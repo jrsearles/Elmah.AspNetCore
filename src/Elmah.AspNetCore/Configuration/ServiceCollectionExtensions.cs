@@ -4,7 +4,7 @@ using Elmah.AspNetCore.Logger;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public static class ServiceCollectionExtensions
 {

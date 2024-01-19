@@ -3,7 +3,7 @@ using Elmah.AspNetCore.MySql;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public static class ElmahMySqlBuilderExtensions
 {

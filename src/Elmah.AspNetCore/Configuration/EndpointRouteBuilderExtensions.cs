@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Elmah;
+namespace Elmah.AspNetCore;
 
 public static class EndpointRouteBuilderExtensions
 {

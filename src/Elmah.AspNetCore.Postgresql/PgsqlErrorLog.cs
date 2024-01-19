@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Elmah.Xml;
+using Elmah.AspNetCore.Xml;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using NpgsqlTypes;
