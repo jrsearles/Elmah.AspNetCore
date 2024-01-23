@@ -103,7 +103,7 @@ internal static partial class Endpoints
     private static async Task<ErrorLogEntryWrapper?> GetErrorAsync(ErrorLog errorLog, Guid id, CancellationToken cancellationToken)
     {
         var error = await errorLog.GetErrorAsync(id, cancellationToken);
-        return error == null ? null : new ErrorLogEntryWrapper(error);
+        return error is null ? null : new ErrorLogEntryWrapper(error);
     }
 
     private static async Task<ErrorsList> GetErrorsAsync(ErrorLog errorLog, ErrorLogFilterCollection errorFilters, int errorIndex, int pageSize, CancellationToken cancellationToken)
@@ -142,15 +142,14 @@ internal static partial class Endpoints
 
     private static async Task<(int, List<ErrorLogEntryWrapper>)> GetNewErrorsAsync(ErrorLog errorLog, Guid errorGuid, ErrorLogFilterCollection errorFilters, CancellationToken cancellationToken)
     {
-        int cnt = 0, count, page = 0;
-
+        int page = 0;
         var buffer = new List<ErrorLogEntry>(10);
         var returnList = new List<ErrorLogEntryWrapper>();
 
         do
         {
             buffer.Clear();
-            count = await errorLog.GetErrorsAsync(errorFilters, page, 10, buffer, cancellationToken);
+            int count = await errorLog.GetErrorsAsync(errorFilters, page, 10, buffer, cancellationToken);
             
             foreach (var el in buffer)
             {
@@ -159,7 +158,6 @@ internal static partial class Endpoints
                     return (count, returnList);
                 }
 
-                cnt += 1;
                 returnList.Add(new ErrorLogEntryWrapper(el));
             }
 

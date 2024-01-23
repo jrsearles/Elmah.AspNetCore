@@ -74,15 +74,23 @@ export default {
   },
   methods: {
     handleResize() {
-      if (!this.root) return;
+      if (!this.root) {
+        return;
+      }
       const height = window.innerHeight - this.root.offsetTop - 30;
       this.root.style.height = height + "px";
-      if (window.innerWidth > 1024) this.$parent.collapsed = false;
+      if (window.innerWidth > 1024) {
+        this.$parent.collapsed = false;
+      }
     },
     scroll() {
-      if (!this.root) return;
+      if (!this.root) {
+        return;
+      }
       this.root.onscroll = () => {
-        if (this.loading || this.loaded) return;
+        if (this.loading || this.loaded) {
+          return;
+        }
 
         let bottomOfWindow =
           this.root.scrollTop + this.root.clientHeight ===
@@ -99,9 +107,12 @@ export default {
                 "&s=50"
             )
             .then((response) => {
-              if (response.data && response.data.errors.length > 0)
+              if (response.data && response.data.errors.length > 0) {
                 this.errorIndex += response.data.errors.length;
-              else this.loaded = true;
+              } else {
+                this.loaded = true;
+              }
+
               this.loading = false;
               this.items = this.items.concat(response.data.errors);
               this.totalCount = response.data.totalCount;
@@ -153,7 +164,7 @@ export default {
         .finally(() => {
           if (!this.loadNewTimerStarted) {
             this.loadNewTimerStarted = true;
-            setTimeout(() => this.loadNewErrors(this), 5000);
+            setTimeout(() => this.loadNewErrors(this), 10000);
           }
         });
       this.handleResize();
@@ -178,7 +189,8 @@ export default {
             response.data.errors &&
             response.data.errors.length
           ) {
-            ctx.items = response.data.errors.concat(ctx.items);
+            var size = Math.min(100, response.data.totalCount);
+            ctx.items = response.data.errors.concat(ctx.items).slice(0, size);
             this.totalCount = response.data.totalCount;
             this.errorIndex += response.data.errors.length;
             this.$bvToast.toast(
@@ -203,7 +215,10 @@ export default {
         })
         .finally(
           () =>
-            (this.loadTimerId = setTimeout(() => this.loadNewErrors(ctx), 5000))
+            (this.loadTimerId = setTimeout(
+              () => this.loadNewErrors(ctx),
+              10000
+            ))
         );
     },
   },

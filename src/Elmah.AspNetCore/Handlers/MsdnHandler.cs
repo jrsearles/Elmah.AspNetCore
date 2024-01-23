@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Elmah.AspNetCore.Handlers;
 
 internal static partial class Endpoints
 {
-    private static readonly MemoryCache Cache = new(Options.Create(new MemoryCacheOptions()));
+    private static readonly MemoryCache Cache = new(Options.Create(new MemoryCacheOptions { SizeLimit = 100 }));
 
     public static IEndpointConventionBuilder MapMsdn(this IEndpointRouteBuilder builder, string prefix = "")
     {
@@ -44,23 +45,37 @@ internal static partial class Endpoints
 
     private static async Task<string> LoadAndCacheMsdnEntryAsync(ICacheEntry entry)
     {
+        entry.Size = 1;
+
         var url = "https://docs.microsoft.com/en-us/dotnet/api/" + entry.Key;
-        var web = new HtmlWeb();
-        var doc = await web.LoadFromWebAsync(url);
-        var nodes = doc.DocumentNode.SelectNodes("//div[@class='summaryHolder']/div[@class='summary clearFix']");
-        if (nodes == null)
+        HtmlDocument? doc = null;
+
+        try
         {
+            var web = new HtmlWeb();
+            doc = await web.LoadFromWebAsync(url);
+        }
+        catch
+        {
+            // ignore errors
+        }
+
+        var nodes = doc?.DocumentNode.SelectNodes("//div[@class='summaryHolder']/div[@class='summary clearFix']");
+        if (nodes is null)
+        {
+            // do not cache
+            entry.AbsoluteExpiration = DateTimeOffset.Now;
             return "{}";
         }
 
-        var links = doc.DocumentNode.SelectNodes("//div[@class='summaryHolder']/div[@class='summary clearFix']//a");
+        var links = doc!.DocumentNode.SelectNodes("//div[@class='summaryHolder']/div[@class='summary clearFix']//a");
 
-        if (links != null)
+        if (links is not null)
         {
             foreach (var link in links)
             {
                 var href = link.Attributes["href"].Value;
-                if (href == null || href.StartsWith("http"))
+                if (href is null || href.StartsWith("http"))
                 {
                     continue;
                 }
@@ -81,6 +96,8 @@ internal static partial class Endpoints
 
         if (string.IsNullOrEmpty(html))
         {
+            // do not cache
+            entry.AbsoluteExpiration = DateTimeOffset.Now;
             return "{}";
         }
 
