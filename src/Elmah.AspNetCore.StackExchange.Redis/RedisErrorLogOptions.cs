@@ -1,0 +1,22 @@
+﻿namespace Elmah.AspNetCore.StackExchange.Redis;
+
+public class RedisErrorLogOptions
+{
+    /// <summary>
+    /// Gets or sets the key prefix used for the list of errors. By default this will use "urn:elmah:error_list:" and
+    /// append the application name for the key.
+    /// </summary>
+    public string RedisListKeyPrefix { get; set; } = "urn:elmah:error_list:";
+
+    /// <summary>
+    /// Gets or sets the key prefix used for individual error payloads. By default this will use "urn:elmah:error:" and
+    /// append the error identifier.
+    /// </summary>
+    public string RedisKeyPrefix { get; set; } = "urn:elmah:error:";
+
+    /// <summary>
+    /// Gets or sets a the number of errors that will be stored in Redis. Older errors will be removed once the limit is reached.
+    /// The default value is 200.
+    /// </summary>
+    public int MaximumSize { get; set; } = 200;
+}

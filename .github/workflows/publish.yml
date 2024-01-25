@@ -41,5 +41,4 @@ jobs:
 
       - name: Pack & Push
         run: |
-          fn=${GITHUB_REF_NAME//[@]/.}
-          dotnet nuget push "artifacts/${fn}*.nupkg" --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push "artifacts/*.nupkg" --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

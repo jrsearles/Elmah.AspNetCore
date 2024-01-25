@@ -109,17 +109,21 @@ The following persistence options are built into the core package:
 - XmlFileErrorLog – store errors in XML files
 
 ```csharp
+using Elmah.AspNetCore;
+
 builder.Host.UseElmah((builderContext, elmah) =>
 {
     elmah.PersistToFile("~/log"; /* OR "с:\errors" */);
 });
 ```
 
-- SqlErrorLog - store errors in MS SQL (add reference to [ElmahCore.Sql](https://www.nuget.org/packages/ElmahCore.Sql) and use `PersistToSql` method)
-- MysqlErrorLog - store errors in MySQL (add reference to [ElmahCore.MySql](https://www.nuget.org/packages/ElmahCore.MySql) and use `PersistToMySql` method)
-- PgsqlErrorLog - store errors in PostgreSQL (add reference to [ElmahCore.PostgreSql](https://www.nuget.org/packages/ElmahCore.PostgreSql) and use `PersistToPgsql` method)
+- SqlErrorLog - store errors in MS SQL (add reference to [Elmah.AspNetCore.MsSql](https://www.nuget.org/packages/Elmah.AspNetCore.MsSql) and use `PersistToSql` method)
+- MysqlErrorLog - store errors in MySQL (add reference to [Elmah.AspNetCore.MySql](https://www.nuget.org/packages/Elmah.AspNetCore.MySql) and use `PersistToMySql` method)
+- PgsqlErrorLog - store errors in PostgreSQL (add reference to [Elmah.AspNetCore.PostgreSql](https://www.nuget.org/packages/Elmah.AspNetCore.PostgreSql) and use `PersistToPgsql` method)
 
 ```csharp
+using Elmah.AspNetCore;
+
 builder.Host.UseElmah((builderContext, elmah) =>
 {
     elmah.PersistToSql(options =>
@@ -127,6 +131,23 @@ builder.Host.UseElmah((builderContext, elmah) =>
         options.ConnectionString = "connection_string";
         options.SqlServerDatabaseSchemaName = "Errors"; //Defaults to dbo if not set
         options.SqlServerDatabaseTableName = "ElmahError"; //Defaults to ELMAH_Error if not set
+    });
+});
+```
+
+- RedisErrorLog - store errors in Redis (add reference to [Elmah.AspNetCore.Redis](https://www.nuget.org/packages/Elmah.AspNetCore.Redis) and use `PersistToRedis` method)
+
+```csharp
+using Elmah.AspNetCore;
+
+builder.Host.UseElmah((builderContext, elmah) =>
+{
+    elmah.PersistToRedis(options =>
+    {
+        // Defaults
+        options.RedisListKeyPrefix = "urn:elmah:error_list:";
+        options.RedisKeyPrefix = "urn:elmah:error:";
+        options.MaximumSize = 200; // (FIFO)
     });
 });
 ```
@@ -233,6 +254,19 @@ public void TestMethod(string p1, int p2)
     // Logging method parameters
     HttpContext.LogParamsToElmah(this, p1, p2);
 }
+```
+
+### Serilog support
+
+If you use [Serilog](https://serilog.net/) for logs and would like these logs to be included as context when Elmah captures errors, the `Serilog.Sinks.Elmah.AspNetCore` package can be used can be used. This will add a `ILogEventSink` to DI which will be picked up by Serilog when the option to read configuration from services is used.
+
+```csharp
+using Elmah.AspNetCore;
+
+builder.Host.UseElmah((builderContext, elmah) =>
+{
+    elmah.CaptureSerilogMessages();
+});
 ```
 
 ## Migrating from ElmahCore
