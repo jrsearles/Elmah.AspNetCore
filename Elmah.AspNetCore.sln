@@ -33,6 +33,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.DemoCore7"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.DemoCore8", "demos\Elmah.AspNetCore.DemoCore8\Elmah.AspNetCore.DemoCore8.csproj", "{69E7AFF6-8C5A-4E4C-B220-0B4821C015E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Elmah.AspNetCore", "src\Serilog.Sinks.Elmah.AspNetCore\Serilog.Sinks.Elmah.AspNetCore.csproj", "{D7BCE4B3-7058-4DED-8C5D-ABC4F5324BB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.AspNetCore.StackExchange.Redis", "src\Elmah.AspNetCore.StackExchange.Redis\Elmah.AspNetCore.StackExchange.Redis.csproj", "{F8636D99-C0A1-4AA6-874A-9F7B2B3C00CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,14 @@ Global
 		{69E7AFF6-8C5A-4E4C-B220-0B4821C015E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69E7AFF6-8C5A-4E4C-B220-0B4821C015E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69E7AFF6-8C5A-4E4C-B220-0B4821C015E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7BCE4B3-7058-4DED-8C5D-ABC4F5324BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7BCE4B3-7058-4DED-8C5D-ABC4F5324BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7BCE4B3-7058-4DED-8C5D-ABC4F5324BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7BCE4B3-7058-4DED-8C5D-ABC4F5324BB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8636D99-C0A1-4AA6-874A-9F7B2B3C00CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8636D99-C0A1-4AA6-874A-9F7B2B3C00CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8636D99-C0A1-4AA6-874A-9F7B2B3C00CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8636D99-C0A1-4AA6-874A-9F7B2B3C00CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
