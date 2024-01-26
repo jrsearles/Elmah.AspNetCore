@@ -3,10 +3,6 @@ using System.Runtime.Serialization;
 
 namespace Elmah.AspNetCore;
 
-#region Imports
-
-#endregion
-
 /// <summary>
 ///     The exception that is thrown when to test the error logging
 ///     subsystem. This exception is used for testing purposes only and
@@ -33,7 +29,7 @@ internal sealed class TestException : ApplicationException
     }
 
     /// <summary>
-    ///     ializes a new instance of the <see cref="TestException" />
+    ///     Initializes a new instance of the <see cref="TestException" />
     ///     class with a specified error message and a reference to the
     ///     inner exception that is the cause of this exception.
     /// </summary>
