@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Security;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -19,13 +18,6 @@ namespace Elmah.AspNetCore;
 
 internal sealed class ErrorFactory : IErrorFactory
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        MaxDepth = 0
-    };
-
     private static readonly string[] SupportedContentTypes =
 {
         MediaTypeNames.Application.Json,

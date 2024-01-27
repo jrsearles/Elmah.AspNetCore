@@ -30,7 +30,7 @@ internal static class HttpContextExtensions
             return false;
         }
 
-        if ("XMLHttpRequest".Equals(context.Request.Headers.XRequestedWith, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals("XMLHttpRequest", context.Request.Headers.XRequestedWith, StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }
