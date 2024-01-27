@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/github/license/jrsearles/Elmah.AspNetCore)](LICENSE)
-[![Build](https://github.com/jrsearles/Elmah.AspNetCore/actions/workflows/build.yml/badge.svg)](https://github.com/jrsearles/Elmah.AspNetCore/actions/workflows/build.yml)
+[![Build](https://github.com/jrsearles/Elmah.AspNetCore/actions/workflows/ci.yml/badge.svg)](https://github.com/jrsearles/Elmah.AspNetCore/actions/workflows/ci.yml)
 [![Nuget](https://img.shields.io/nuget/v/Elmah.AspNetCore)](https://www.nuget.org/packages/Elmah.AspNetCore)
 
 # Elmah.AspNetCore
