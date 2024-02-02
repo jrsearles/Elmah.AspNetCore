@@ -38,6 +38,9 @@ jobs:
       - name: Dotnet Restore
         run: dotnet restore
 
+      - name: Nuget markdown files
+        uses: devlooped/actions-include@v1
+
       - name: Dotnet Build
         run: dotnet build --configuration Release --no-restore
 
@@ -48,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: packages
-          path: artifacts/
+          path: artifacts/package/release
 
   publish:
     runs-on: ubuntu-latest

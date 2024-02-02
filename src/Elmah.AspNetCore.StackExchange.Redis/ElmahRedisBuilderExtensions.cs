@@ -1,5 +1,7 @@
 ﻿using Elmah.AspNetCore.StackExchange.Redis;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
@@ -44,6 +46,9 @@ public static class ElmahRedisBuilderExtensions
     public static void PersistToRedis(this IElmahBuilder builder, IConnectionMultiplexer server, Action<RedisErrorLogOptions> configureOptions)
     {
         builder.Services.Configure(configureOptions);
-        builder.PersistTo(sp => new RedisErrorLog(server, sp.GetRequiredService<IOptions<RedisErrorLogOptions>>()));
+        builder.PersistTo(sp => new RedisErrorLog(
+            server,
+            sp.GetRequiredService<IOptions<RedisErrorLogOptions>>(),
+            sp.GetService<ILogger<RedisErrorLog>>() ?? NullLogger<RedisErrorLog>.Instance));
     }
 }

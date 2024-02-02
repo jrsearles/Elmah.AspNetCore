@@ -2,6 +2,7 @@
 [![Build](https://github.com/jrsearles/Elmah.AspNetCore/actions/workflows/ci.yml/badge.svg)](https://github.com/jrsearles/Elmah.AspNetCore/actions/workflows/ci.yml)
 [![Nuget](https://img.shields.io/nuget/v/Elmah.AspNetCore)](https://www.nuget.org/packages/Elmah.AspNetCore)
 
+<!-- #intro -->
 # Elmah.AspNetCore
 
 ELMAH (Error Logging Middleware and Handlers) for ASP.NET Core.
@@ -16,11 +17,11 @@ Features include:
 - [Notifications of errors](#using-notifiers) through email or custom notifiers
 - Integration with `Microsoft.Extensions.Logging` to capture logs made during a request
 - Supports .NET 6+
-
+<!-- #intro -->
 ![alt text](https://github.com/ElmahCore/ElmahCore/raw/master/images/elmah-new-ui.png)
 
 > This is a fork of [ElmahCore](https://github.com/ElmahCore/ElmahCore) which is itself a fork of the original [Elmah](https://elmah.github.io/) library. Credit goes to the owners and contributors of those libraries. This fork attempts to catch up with features added to .NET.
-
+<!-- #usage -->
 ## Basic usage
 
 **First**, install the _Elmah.AspNetCore_ [Nuget package](https://www.nuget.org/packages/Elmah.AspNetCore) into your app.
@@ -51,7 +52,7 @@ app.MapElmah(); // <- Add this to register Elmah endpoints
 `app.UseElmahMiddleware()` registers the middleware used by Elmah to start capturing errors and contextual information. Only middleware registered after the Elmah middleware will be included in the error capturing. It is recommended that this is included before most other middleware. For best results, call after the built-in `UseExceptionHandler()`.
 
 `app.MapElmah()` registers the routes used to serve content for the Elmah UI. By default these will be under `/elmah`, but the method includes an overload which allows overriding the root path.
-
+<!-- #usage -->
 ## Elmah Options
 
 | Option                | Type                           | Default                                 | Description                                                                |
@@ -116,7 +117,7 @@ builder.Host.UseElmah((builderContext, elmah) =>
     elmah.PersistToFile("~/log"; /* OR "с:\errors" */);
 });
 ```
-
+<!-- #sql -->
 - SqlErrorLog - store errors in MS SQL (add reference to [Elmah.AspNetCore.MsSql](https://www.nuget.org/packages/Elmah.AspNetCore.MsSql) and use `PersistToSql` method)
 - MysqlErrorLog - store errors in MySQL (add reference to [Elmah.AspNetCore.MySql](https://www.nuget.org/packages/Elmah.AspNetCore.MySql) and use `PersistToMySql` method)
 - PgsqlErrorLog - store errors in PostgreSQL (add reference to [Elmah.AspNetCore.PostgreSql](https://www.nuget.org/packages/Elmah.AspNetCore.PostgreSql) and use `PersistToPgsql` method)
@@ -134,7 +135,8 @@ builder.Host.UseElmah((builderContext, elmah) =>
     });
 });
 ```
-
+<!-- #sql -->
+<!-- #redis -->
 - RedisErrorLog - store errors in Redis (add reference to [Elmah.AspNetCore.Redis](https://www.nuget.org/packages/Elmah.AspNetCore.Redis) and use `PersistToRedis` method)
 
 ```csharp
@@ -151,7 +153,7 @@ builder.Host.UseElmah((builderContext, elmah) =>
     });
 });
 ```
-
+<!-- #redis -->
 You can create implement your own error log persistence by implementing the abstract class `Elmah.ErrorLog` and registered it using the builder method `elmah.PersistTo<YourErrorLog>()` (or one of the other `PersistTo` overloads).
 
 ## Using UseElmahExceptionPage
@@ -255,7 +257,7 @@ public void TestMethod(string p1, int p2)
     HttpContext.LogParamsToElmah(this, p1, p2);
 }
 ```
-
+<!-- #serilog -->
 ### Serilog support
 
 If you use [Serilog](https://serilog.net/) for logs and would like these logs to be included as context when Elmah captures errors, the `Serilog.Sinks.Elmah.AspNetCore` package can be used can be used. This will add a `ILogEventSink` to DI which will be picked up by Serilog when the option to read configuration from services is used.
@@ -268,7 +270,7 @@ builder.Host.UseElmah((builderContext, elmah) =>
     elmah.CaptureSerilogMessages();
 });
 ```
-
+<!-- #serilog -->
 ## Migrating from ElmahCore
 
 Although this is a fork of [ElmahCore](https://github.com/ElmahCore/ElmahCore), it is not quite a drop-in replacement. The core functionality is all here and largely unchanged, however there has been a lot of refactoring. There are numerous breaking changes, including the following. (This is not an exhaustive list.)
