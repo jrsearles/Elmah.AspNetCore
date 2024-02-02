@@ -41,7 +41,7 @@ jobs:
       - name: Nuget markdown files
         uses: devlooped/actions-include@v1
         with:
-          exclude: 'ui/'
+          exclude: 'ui/**/*.md'
 
       - name: Dotnet Build
         run: dotnet build --configuration Release --no-restore
