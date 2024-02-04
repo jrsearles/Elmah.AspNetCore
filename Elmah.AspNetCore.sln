@@ -7,8 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
 		README.md = README.md
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.MsSql", "src\Elmah.AspNetCore.MsSql\Elmah.AspNetCore.MsSql.csproj", "{BCE602D7-1ABB-42F5-BC1F-77F7C1985708}"
@@ -33,9 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.DemoCore7"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.DemoCore8", "demos\Elmah.AspNetCore.DemoCore8\Elmah.AspNetCore.DemoCore8.csproj", "{69E7AFF6-8C5A-4E4C-B220-0B4821C015E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Elmah.AspNetCore", "src\Serilog.Sinks.Elmah.AspNetCore\Serilog.Sinks.Elmah.AspNetCore.csproj", "{D7BCE4B3-7058-4DED-8C5D-ABC4F5324BB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.Elmah.AspNetCore", "src\Serilog.Sinks.Elmah.AspNetCore\Serilog.Sinks.Elmah.AspNetCore.csproj", "{D7BCE4B3-7058-4DED-8C5D-ABC4F5324BB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmah.AspNetCore.StackExchange.Redis", "src\Elmah.AspNetCore.StackExchange.Redis\Elmah.AspNetCore.StackExchange.Redis.csproj", "{F8636D99-C0A1-4AA6-874A-9F7B2B3C00CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmah.AspNetCore.StackExchange.Redis", "src\Elmah.AspNetCore.StackExchange.Redis\Elmah.AspNetCore.StackExchange.Redis.csproj", "{F8636D99-C0A1-4AA6-874A-9F7B2B3C00CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

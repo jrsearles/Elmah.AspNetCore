@@ -1,5 +1,4 @@
 ﻿using System;
-using Elmah.AspNetCore;
 using Elmah.AspNetCore.Logger;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Mime;
 using System.Reflection;
@@ -9,30 +8,28 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
 namespace Elmah.AspNetCore.Handlers;
 
 internal static partial class Endpoints
 {
-    private static readonly HashSet<string> ResourceNames =
-        new(typeof(Endpoints).Assembly.GetManifestResourceNames(), StringComparer.OrdinalIgnoreCase);
-
     private static readonly Assembly ThisAssembly = typeof(Endpoints).Assembly;
-    private static readonly string ResourcePrefix = $"{ThisAssembly.GetName().Name}.wwwroot.";
-    private static readonly string IndexHtml = ResourcePrefix + "index.html";
+    private static readonly EmbeddedFileProvider StaticFiles = new(ThisAssembly, $"{ThisAssembly.GetName().Name}.wwwroot");
 
     private static async Task<IResult> ReturnIndex([FromServices] ILoggerFactory loggerFactory, HttpContext context)
     {
-        using var stream = ThisAssembly.GetManifestResourceStream(IndexHtml);
-        if (stream is null)
+        var indexFile = StaticFiles.GetFileInfo("index.html");
+        if (indexFile is not { Exists: true })
         {
             var logger = loggerFactory.CreateLogger("Elmah.AspNetCore");
-            logger.LogError("{page} is not found for Elmah - has static content been generated?", IndexHtml);
+            logger.LogError("{page} is not found for Elmah - has static content been generated?", "index.html");
             return Results.NotFound();
         }
 
-        using var reader = new StreamReader(stream ?? throw new InvalidOperationException());
+        using var stream = indexFile.CreateReadStream();
+        using var reader = new StreamReader(stream);
 
         var elmahRoot = context.GetElmahRelativeRoot();
         var html = await reader.ReadToEndAsync();
@@ -60,20 +57,14 @@ internal static partial class Endpoints
                 return await ReturnIndex(loggerFactory, context);
             }
 
-            var resName = ResourcePrefix + path.Replace('/', '.').Replace('\\', '.');
-            if (!ResourceNames.Contains(resName))
+            var fileInfo = StaticFiles.GetFileInfo(path);
+            if (fileInfo is not { Exists: true })
             {
                 return Results.NotFound();
             }
-            
-            var resource = ThisAssembly.GetManifestResourceStream(resName);
-            if (resource is null)
-            {
-                return Results.NoContent();
-            }
 
             contentTypeProvider.TryGetContentType(path, out string? contentType);
-            return Results.Stream(resource, contentType);
+            return Results.Stream(fileInfo.CreateReadStream(), contentType);
         });
 
         var pipeline = builder.CreateApplicationBuilder();
