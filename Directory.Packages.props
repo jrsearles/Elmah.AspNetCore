@@ -15,7 +15,7 @@
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
     <PackageVersion Include="Serilog" Version="3.1.1" />
     <PackageVersion Include="StackExchange.Redis" Version="2.7.17" />
-    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
     <PackageVersion Include="xunit" Version="2.6.6" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.6" />
