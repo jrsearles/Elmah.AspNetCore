@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Serilog.Core;
 using Serilog.Sinks.Elmah.AspNetCore;
 
 namespace Elmah.AspNetCore;
@@ -11,6 +12,6 @@ public static class ElmahSerilogBuilderExtensions
     /// <param name="builder"></param>
     public static void CaptureSerilogMessages(this IElmahBuilder builder)
     {
-        builder.Services.AddSingleton<ElmahSink>();
+        builder.Services.AddSingleton<ILogEventSink, ElmahSink>();
     }
 }
