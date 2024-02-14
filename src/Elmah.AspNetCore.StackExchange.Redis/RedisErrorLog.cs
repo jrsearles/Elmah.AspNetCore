@@ -65,20 +65,18 @@ public class RedisErrorLog : ErrorLog
             var db = _redis.GetDatabase();
             var keys = await db.ListRangeAsync(_listKey, errorIndex, errorIndex + pageSize - 1);
 
-            if (keys is null || keys.Length == 0)
+            if (keys?.Length > 0)
             {
-                return 0;
-            }
-
-            var values = await db.StringGetAsync(keys.Select(x => new RedisKey(x)).ToArray());
-            foreach (string? value in values)
-            {
-                if (value is null)
+                var values = await db.StringGetAsync(keys.Select(x => new RedisKey(x)).ToArray());
+                foreach (string? value in values)
                 {
-                    continue;
-                }
+                    if (value is null)
+                    {
+                        continue;
+                    }
 
-                entries.Add(this.ReadErrorFromRedis(value));
+                    entries.Add(this.ReadErrorFromRedis(value));
+                }
             }
 
             count = Convert.ToInt32(await db.ListLengthAsync(_listKey));
