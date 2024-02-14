@@ -117,12 +117,12 @@ public class RedisErrorLog : ErrorLog
     private async Task TrimAsync(IDatabase db)
     {
         // need to get last entries to delete actual records
-        var keys = await db.ListRangeAsync(_listKey, _options.MaximumSize, -1);
+        var keys = await db.ListRangeAsync(_listKey, _options.MaximumSize);
         if (keys is not null)
         {
             foreach (var key in keys)
             {
-                await db.StringGetDeleteAsync(key.ToString());
+                await db.KeyDeleteAsync(key.ToString());
             }
         }
 
