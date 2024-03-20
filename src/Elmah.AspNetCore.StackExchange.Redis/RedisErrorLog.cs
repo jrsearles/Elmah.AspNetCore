@@ -9,21 +9,32 @@ namespace Elmah.AspNetCore.StackExchange.Redis;
 
 public class RedisErrorLog : ErrorLog
 {
-    private readonly IConnectionMultiplexer _redis;
+    private readonly Lazy<Task<IConnectionMultiplexer>> _redis;
     private readonly ILogger<RedisErrorLog> _logger;
     private readonly RedisErrorLogOptions _options;
 
     private readonly RedisKey _listKey;
     private readonly RedisKey _keyPrefix;
 
+    public RedisErrorLog(IOptions<RedisErrorLogOptions> options)
+        : this(null, options, NullLogger<RedisErrorLog>.Instance)
+    {
+    }
+
     public RedisErrorLog(IConnectionMultiplexer redis, IOptions<RedisErrorLogOptions> options)
         : this(redis, options, NullLogger<RedisErrorLog>.Instance)
     {
     }
 
-    public RedisErrorLog(IConnectionMultiplexer redis, IOptions<RedisErrorLogOptions> options, ILogger<RedisErrorLog> logger)
+    public RedisErrorLog(IConnectionMultiplexer? redis, IOptions<RedisErrorLogOptions> options, ILogger<RedisErrorLog> logger)
     {
-        _redis = redis;
+        var factory = redis is null ? options.Value.ConnectionMultiplexerFactory : (() => Task.FromResult(redis));
+        if (factory is null)
+        {
+            throw new ArgumentNullException("The IConnectionMultiplexer must exist in dependency injection or as a factory method on RedisErrorLogOptions.ConnectionMultiplexerFactory.", nameof(redis));
+        }
+
+        _redis = new Lazy<Task<IConnectionMultiplexer>>(factory, LazyThreadSafetyMode.PublicationOnly);
         _logger = logger;
         _options = options.Value;
 
@@ -37,7 +48,8 @@ public class RedisErrorLog : ErrorLog
 
         try
         {
-            var db = _redis.GetDatabase();
+            var server = await _redis.Value;
+            var db = server.GetDatabase();
             var key = this.GetErrorKey(id);
 
             value = await db.StringGetAsync(key);
@@ -62,7 +74,8 @@ public class RedisErrorLog : ErrorLog
 
         try
         {
-            var db = _redis.GetDatabase();
+            var server = await _redis.Value;
+            var db = server.GetDatabase();
             var keys = await db.ListRangeAsync(_listKey, errorIndex, errorIndex + pageSize - 1);
 
             if (keys is null || keys.Length == 0)
@@ -95,7 +108,8 @@ public class RedisErrorLog : ErrorLog
     {
         try
         {
-            IDatabase db = _redis.GetDatabase();
+            var server = await _redis.Value;
+            IDatabase db = server.GetDatabase();
 
             // append key so we can easily rehydrate
             RedisValue errorXml = $"{error.Id:N}{ErrorXml.EncodeString(error)}";

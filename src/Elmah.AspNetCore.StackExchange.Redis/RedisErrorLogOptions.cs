@@ -1,4 +1,6 @@
-﻿namespace Elmah.AspNetCore.StackExchange.Redis;
+﻿using StackExchange.Redis;
+
+namespace Elmah.AspNetCore.StackExchange.Redis;
 
 public class RedisErrorLogOptions
 {
@@ -19,4 +21,9 @@ public class RedisErrorLogOptions
     /// The default value is 200.
     /// </summary>
     public int MaximumSize { get; set; } = 200;
+
+    /// <summary>
+    /// Gets or sets a Redis connection to be used when accessing the redis server.
+    /// </summary>
+    public Func<Task<IConnectionMultiplexer>>? ConnectionMultiplexerFactory { get; set; }
 }
