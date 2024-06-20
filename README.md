@@ -41,7 +41,7 @@ builder.Host.UseElmah(); // <- Add this to configure Elmah
 
 var app = builder.Build();
 
-app.UseErrorHandler();
+app.UseExceptionHandler();
 app.UseElmahMiddleware(); // <- Add this to register middleware
 
 app.MapElmah(); // <- Add this to register Elmah endpoints
