@@ -282,7 +282,7 @@ Although this is a fork of [ElmahCore](https://github.com/ElmahCore/ElmahCore), 
 - Removing sync-over-async. ErrorLog and other exposed methods are async when anything within the call stack is async.
 - More options were added to omit logging sensitive details like cookies or SQL queries.
 
-## Contributing
+## Running Source Locally
 
 The Elmah application contains a small [Vue](https://vuejs.org/) frontend which is bundled and embedded into the application when packaged. The source for the frontend is in the `ui` folder. The bundled content is not included in source control. Run `npm install` and then `npm run build` to generate the bundled content locally, which will place the bundled application into the `wwwroot` folder of the `Elmah.AspNetCore` project. Building the Elmah project will then embed the bundled content.
 
