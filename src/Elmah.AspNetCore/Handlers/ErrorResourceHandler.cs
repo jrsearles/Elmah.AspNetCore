@@ -24,7 +24,7 @@ internal static partial class Endpoints
         if (indexFile is not { Exists: true })
         {
             var logger = loggerFactory.CreateLogger("Elmah.AspNetCore");
-            logger.LogError("{page} is not found for Elmah - has static content been generated?", "index.html");
+            logger.LogError("{page} is not found for Elmah - has static content been generated? See 'Running Source Locally' in README.md for more details.", "index.html");
             return Results.NotFound();
         }
 
