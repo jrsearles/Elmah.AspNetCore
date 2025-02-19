@@ -18,7 +18,7 @@
     "dateformat": "^5.0.3",
     "highlight.js": "^9.18.5",
     "typeface-roboto": "^1.1.13",
-    "vue": "^2.6.12",
+    "vue": "^3.0.0",
     "vue-async-computed": "^3.9.0",
     "vue-flag-icon": "^1.0.6",
     "vue-highlight.js": "^3.1.0",
