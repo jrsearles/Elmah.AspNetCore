@@ -142,6 +142,7 @@ internal static partial class Endpoints
 
     private static async Task<(int, List<ErrorLogEntryWrapper>)> GetNewErrorsAsync(ErrorLog errorLog, Guid errorGuid, ErrorLogFilterCollection errorFilters, CancellationToken cancellationToken)
     {
+        const int pageSize = 10;
         int page = 0;
         var buffer = new List<ErrorLogEntry>(10);
         var returnList = new List<ErrorLogEntryWrapper>();
@@ -149,8 +150,8 @@ internal static partial class Endpoints
         do
         {
             buffer.Clear();
-            int count = await errorLog.GetErrorsAsync(errorFilters, page, 10, buffer, cancellationToken);
-            
+            int count = await errorLog.GetErrorsAsync(errorFilters, page * pageSize, pageSize, buffer, cancellationToken);
+
             foreach (var el in buffer)
             {
                 if (el.Id == errorGuid)
