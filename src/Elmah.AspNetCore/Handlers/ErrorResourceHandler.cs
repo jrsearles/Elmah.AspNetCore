@@ -33,7 +33,8 @@ internal static partial class Endpoints
 
         var elmahRoot = context.GetElmahRelativeRoot();
         var html = await reader.ReadToEndAsync();
-        html = html.Replace("ELMAH_ROOT", elmahRoot);
+        html = html.Replace("ELMAH_ROOT", elmahRoot).Replace("ELMAH_CONFIG", "{maxErrors:100}");
+
         return Results.Content(html, MediaTypeNames.Text.Html);
     }
 

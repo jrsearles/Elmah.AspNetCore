@@ -181,7 +181,10 @@ export default {
             id +
             "&q=" +
             encodeURIComponent(searchText),
-          filterTags
+          filterTags,
+          {
+            timeout: 1234
+          }
         )
         .then((response) => {
           if (
@@ -189,7 +192,8 @@ export default {
             response.data.errors &&
             response.data.errors.length
           ) {
-            var size = Math.min(100, response.data.totalCount);
+            var maxErrors = window.$elmah_config && window.$elmah_config.maxErrors ? window.$elmah_config.maxErrors : 100;
+            var size = Math.min(maxErrors, response.data.totalCount);
             ctx.items = response.data.errors.concat(ctx.items).slice(0, size);
             this.totalCount = response.data.totalCount;
             this.errorIndex += response.data.errors.length;
