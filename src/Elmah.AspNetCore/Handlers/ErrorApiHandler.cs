@@ -45,7 +45,7 @@ internal static partial class Endpoints
             HttpRequest request,
             CancellationToken cancellationToken) =>
         {
-            var filters = await ReadErrorFilters(request, searchText);
+            var filters = await ReadErrorFilters(request, searchText, cancellationToken);
 
             var entities = await GetErrorsAsync(errorLog, filters, errorIndex ?? 0, pageSize ?? 0, cancellationToken);
             return Results.Json(entities, DefaultJsonSerializerOptions.ApiSerializerOptions);
@@ -65,7 +65,7 @@ internal static partial class Endpoints
             HttpRequest request,
             CancellationToken cancellationToken) =>
         {
-            var filters = await ReadErrorFilters(request, searchText);
+            var filters = await ReadErrorFilters(request, searchText, cancellationToken);
 
             var newEntities = await GetNewErrorsAsync(errorLog, id, filters, cancellationToken);
             return Results.Json(newEntities, DefaultJsonSerializerOptions.ApiSerializerOptions);
@@ -76,7 +76,7 @@ internal static partial class Endpoints
         return builder.MapPost($"{prefix}/api/new-errors", pipeline.Build());
     }
 
-    private static async Task<ErrorLogFilterCollection> ReadErrorFilters(HttpRequest request, string? searchText)
+    private static async Task<ErrorLogFilterCollection> ReadErrorFilters(HttpRequest request, string? searchText, CancellationToken cancellationToken)
     {
         var filters = new ErrorLogFilterCollection();
         if (!string.IsNullOrEmpty(searchText))
@@ -86,7 +86,7 @@ internal static partial class Endpoints
 
         if (HttpMethods.IsPost(request.Method))
         {
-            var strings = await JsonSerializer.DeserializeAsync<string[]>(request.Body) ?? Array.Empty<string>();
+            var strings = await JsonSerializer.DeserializeAsync<string[]>(request.Body, cancellationToken: cancellationToken) ?? Array.Empty<string>();
             foreach (var str in strings)
             {
                 var filter = ErrorLogPropertyFilter.Parse(str);
@@ -163,7 +163,7 @@ internal static partial class Endpoints
             }
 
             page += 1;
-        } while (buffer.Count > 0);
+        } while (buffer.Count > 0 && !cancellationToken.IsCancellationRequested);
 
         return (0, returnList);
     }
