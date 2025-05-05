@@ -662,6 +662,7 @@
 
 <script>
 import axios from "axios";
+import config from "../config";
 
 export default {
   name: "ErrorDetail",
@@ -685,7 +686,7 @@ export default {
       return document.getElementById("items-container");
     },
     elmah_root: function () {
-      return window.$elmah_root;
+      return config.getPath();
     },
     body: function () {
       try {

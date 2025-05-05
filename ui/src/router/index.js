@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import config from "../config";
 import About from "@/views/About.vue";
 import Detail from "@/views/Detail";
 import List from "@/views/List";
@@ -41,7 +42,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: "history",
-  base: window.$elmah_root || "/elmah",
+  base: config.getPath(),
   routes,
   linkExactActiveClass: "exact-active",
   linkActiveClass: "active",

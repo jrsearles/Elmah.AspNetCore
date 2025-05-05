@@ -102,6 +102,7 @@
 
 <script>
 import store from "./../store";
+import config from "./../config";
 import dateFormat from "dateformat";
 
 export default {
@@ -237,7 +238,7 @@ export default {
   },
   computed: {
     elmah_root: function () {
-      return window.$elmah_root;
+      return config.getPath();
     },
     isErrorsPage() {
       return this.$route.name === "Errors";

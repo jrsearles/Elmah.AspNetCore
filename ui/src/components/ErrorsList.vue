@@ -28,6 +28,7 @@
 <script>
 import axios from "axios";
 import store from "./../store";
+import config from "./../config";
 import ErrorListItem from "@/components/ErrorListItem";
 
 export default {
@@ -44,6 +45,7 @@ export default {
       loadNewTimerStarted: false,
       filtersHash: "",
       loadTimerId: null,
+      maxErrors: 1,
     };
   },
   watch: {
@@ -101,10 +103,7 @@ export default {
           // eslint-disable-next-line no-undef
           axios
             .get(
-              (window.$elmah_root || "/elmah") +
-                "/api/errors?i=" +
-                this.errorIndex +
-                "&s=50"
+              config.getPath() + "/api/errors?i=" + this.errorIndex + "&s=50"
             )
             .then((response) => {
               if (response.data && response.data.errors.length > 0) {
@@ -112,7 +111,7 @@ export default {
               } else {
                 this.loaded = true;
               }
-
+              this.maxErrors += response.data.errors.length; //increment max total if they are user is down
               this.loading = false;
               this.items = this.items.concat(response.data.errors);
               this.totalCount = response.data.totalCount;
@@ -136,12 +135,13 @@ export default {
         this.loadTimerId = null;
       }
 
+      this.maxErrors = config.getMaxErrors();
       var filterTags = store.getters.filterTags;
       var searchText = store.getters.searchText;
 
       axios
         .post(
-          (window.$elmah_root || "/elmah") +
+          config.getPath() +
             "/api/errors?p=0&s=50&q=" +
             encodeURIComponent(searchText),
           filterTags
@@ -176,15 +176,12 @@ export default {
       // eslint-disable-next-line no-undef
       axios
         .post(
-          (window.$elmah_root || "/elmah") +
+          config.getPath() +
             "/api/new-errors?id=" +
             id +
             "&q=" +
             encodeURIComponent(searchText),
-          filterTags,
-          {
-            timeout: 1234
-          }
+          filterTags
         )
         .then((response) => {
           if (
@@ -192,11 +189,16 @@ export default {
             response.data.errors &&
             response.data.errors.length
           ) {
-            var maxErrors = window.$elmah_config && window.$elmah_config.maxErrors ? window.$elmah_config.maxErrors : 100;
-            var size = Math.min(maxErrors, response.data.totalCount);
+            var size = Math.min(
+              this.maxErrors,
+              response.data.errors.length + ctx.items.length
+            );
             ctx.items = response.data.errors.concat(ctx.items).slice(0, size);
             this.totalCount = response.data.totalCount;
-            this.errorIndex += response.data.errors.length;
+            this.errorIndex += response.data.errors.length; //if this is sliced then actually it should be no greater than the "size"
+            if (this.errorIndex > size) {
+              this.errorIndex = size;
+            }
             this.$bvToast.toast(
               `${response.data.errors.length} new error(s) loaded.`,
               {

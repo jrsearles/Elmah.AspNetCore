@@ -6,6 +6,7 @@
 
 <script>
 import axios from "axios";
+import config from "../config";
 import ErrorDetail from "@/components/ErrorDetail";
 export default {
   name: "Detail",
@@ -18,7 +19,7 @@ export default {
   components: { ErrorDetail },
   mounted() {
     axios
-      .get((window.$elmah_root || "/elmah") + "/api/error?id=" + this.id)
+      .get(config.getPath() + "/api/error?id=" + this.id)
       .then((response) => {
         this.item = response.data.error;
       })
