@@ -4,6 +4,7 @@ using Elmah.AspNetCore.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Elmah.AspNetCore;
 
@@ -13,8 +14,10 @@ public static class EndpointRouteBuilderExtensions
 
     public static IEndpointConventionBuilder MapElmah(this IEndpointRouteBuilder endpoints, [StringSyntax("Route")] string prefix)
     {
-        var options = endpoints.ServiceProvider.GetRequiredService<ElmahEnvironment>();
-        options.Path = prefix;
+        var elmahEnvironment = endpoints.ServiceProvider.GetRequiredService<ElmahEnvironment>();
+        var elmahOptions = endpoints.ServiceProvider.GetRequiredService<IOptions<ElmahOptions>>().Value;
+        elmahEnvironment.Path = prefix;
+        elmahEnvironment.MaxUiErrors = elmahOptions.MaxUiErrors;
 
 #if NET7_0_OR_GREATER
         var group = endpoints.MapGroup(prefix);
