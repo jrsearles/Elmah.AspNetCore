@@ -23,6 +23,11 @@ public class RedisErrorLogOptions
     public int MaximumSize { get; set; } = 200;
 
     /// <summary>
+    /// Gets or sets the time to live for the error record. This sets the expiration on the redis key.
+    /// </summary>
+    public TimeSpan ErrorLogTtl { get; set; } = TimeSpan.FromDays(1);
+
+    /// <summary>
     /// Gets or sets a Redis connection to be used when accessing the redis server.
     /// </summary>
     public Func<Task<IConnectionMultiplexer>>? ConnectionMultiplexerFactory { get; set; }
