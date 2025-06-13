@@ -67,7 +67,7 @@ public class RedisErrorLog : ErrorLog
 
         return this.ReadErrorFromRedis(value);
     }
-    
+
     public override async Task<int> GetErrorsAsync(ErrorLogFilterCollection errorLogFilters, int errorIndex, int pageSize, ICollection<ErrorLogEntry> entries, CancellationToken cancellationToken)
     {
         int count = 0;
@@ -112,7 +112,7 @@ public class RedisErrorLog : ErrorLog
             // append key so we can easily rehydrate
             RedisValue errorXml = $"{error.Id:N}{ErrorXml.EncodeString(error)}";
             RedisKey key = this.GetErrorKey(error.Id);
-            await db.StringSetAsync(key, errorXml);
+            await db.StringSetAsync(key, errorXml, expiry: _options.ErrorLogTtl);
 
             var len = await db.ListLeftPushAsync(_listKey, key.ToString());
             if (len > _options.MaximumSize)
