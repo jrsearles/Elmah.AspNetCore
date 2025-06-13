@@ -16,6 +16,11 @@ internal static class HttpContextExtensions
         var options = context.RequestServices.GetRequiredService<ElmahEnvironment>();
         return context.Request.PathBase.Add(options.Path);
     }
+    public static int GetElmahMaxUiErrors(this HttpContext context)
+    {
+        var options = context.RequestServices.GetRequiredService<ElmahEnvironment>();
+        return options.MaxUiErrors;
+    }
 
     public static string GetElmahAbsoluteRoot(this HttpContext context)
     {

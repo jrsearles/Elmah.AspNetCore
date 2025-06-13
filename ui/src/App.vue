@@ -54,6 +54,7 @@
 <script>
 import ErrorListFilter from "@/components/ErrorListFilter";
 import store from "./store";
+import config from "./config";
 
 export default {
   name: "App",
@@ -71,7 +72,7 @@ export default {
   },
   computed: {
     elmah_root: function () {
-      return window.$elmah_root;
+      return config.getPath();
     },
   },
 };

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Options;
 
 namespace Elmah.AspNetCore.Handlers;
 
@@ -62,12 +63,13 @@ internal static partial class Endpoints
             [FromQuery] string? id,
             [FromQuery(Name = "q")] string? searchText,
             [FromServices] ErrorLog errorLog,
+            [FromServices] IOptions<ElmahOptions> options,
             HttpRequest request,
             CancellationToken cancellationToken) =>
         {
             var filters = await ReadErrorFilters(request, searchText, cancellationToken);
 
-            var newEntities = await GetNewErrorsAsync(errorLog, id, filters, cancellationToken);
+            var newEntities = await GetNewErrorsAsync(errorLog, id, filters, options.Value, cancellationToken);
             return Results.Json(newEntities, DefaultJsonSerializerOptions.ApiSerializerOptions);
         });
 
@@ -125,14 +127,14 @@ internal static partial class Endpoints
         };
     }
 
-    private static async Task<ErrorsList> GetNewErrorsAsync(ErrorLog errorLog, string? id, ErrorLogFilterCollection errorFilters, CancellationToken cancellationToken)
+    private static async Task<ErrorsList> GetNewErrorsAsync(ErrorLog errorLog, string? id, ErrorLogFilterCollection errorFilters, ElmahOptions options, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out Guid errorGuid))
         {
             return await GetErrorsAsync(errorLog, errorFilters, 0, 50, cancellationToken);
         }
 
-        var (totalCount, errors) = await GetNewErrorsAsync(errorLog, errorGuid, errorFilters, cancellationToken);
+        var (totalCount, errors) = await GetNewErrorsAsync(errorLog, errorGuid, errorFilters, options, cancellationToken);
         return new ErrorsList
         {
             Errors = errors,
@@ -140,7 +142,7 @@ internal static partial class Endpoints
         };
     }
 
-    private static async Task<(int, List<ErrorLogEntryWrapper>)> GetNewErrorsAsync(ErrorLog errorLog, Guid errorGuid, ErrorLogFilterCollection errorFilters, CancellationToken cancellationToken)
+    private static async Task<(int, List<ErrorLogEntryWrapper>)> GetNewErrorsAsync(ErrorLog errorLog, Guid errorGuid, ErrorLogFilterCollection errorFilters, ElmahOptions options, CancellationToken cancellationToken)
     {
         const int pageSize = 10;
         int page = 0;
@@ -154,7 +156,7 @@ internal static partial class Endpoints
 
             foreach (var el in buffer)
             {
-                if (el.Id == errorGuid)
+                if (el.Id == errorGuid || returnList.Count >= options.MaxUiErrors)
                 {
                     return (count, returnList);
                 }
@@ -163,7 +165,7 @@ internal static partial class Endpoints
             }
 
             page += 1;
-        } while (buffer.Count > 0 && !cancellationToken.IsCancellationRequested);
+        } while (buffer.Count > 0 && returnList.Count < options.MaxUiErrors && !cancellationToken.IsCancellationRequested);
 
         return (0, returnList);
     }

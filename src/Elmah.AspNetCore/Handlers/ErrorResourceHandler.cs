@@ -32,8 +32,10 @@ internal static partial class Endpoints
         using var reader = new StreamReader(stream);
 
         var elmahRoot = context.GetElmahRelativeRoot();
+        var maxErrors = context.GetElmahMaxUiErrors();
         var html = await reader.ReadToEndAsync();
-        html = html.Replace("ELMAH_ROOT", elmahRoot);
+        html = html.Replace("ELMAH_ROOT", elmahRoot).Replace("ELMAH_CONFIG", $"{{maxErrors:{maxErrors}}}");
+
         return Results.Content(html, MediaTypeNames.Text.Html);
     }
 

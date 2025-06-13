@@ -70,5 +70,11 @@ public class ElmahOptions
     /// </summary>
     public bool LogSqlQueryParameters { get; set; } = true;
 
+
+    /// <summary>
+    ///     Gets or sets a value the maximum errors to show in the user interface's errors list (Default is 100)
+    /// </summary>
+    public int MaxUiErrors { get; set; } = 100;
+
     public virtual Task Error(HttpContext context, Error error) => OnError(context, error);
 }
